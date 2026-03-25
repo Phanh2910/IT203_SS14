@@ -3,9 +3,9 @@ import java.math.BigDecimal;
 
 public class Main {
 
-	private static final String URL = "jdbc:mysql://localhost:3306/ten_database_cua_ban?useSSL=false&serverTimezone=UTC";
+	private static final String URL = "jdbc:mysql://localhost:3306/Main?useSSL=false&serverTimezone=UTC";
 	private static final String USER = "root";
-	private static final String PASS = "mat_khau_cua_ban";
+	private static final String PASS = "matkhaucuaban";
 
 	public static void main(String[] args) {
 		processTransfer("ACC01", "ACC02", new BigDecimal("1500.00"));
@@ -30,37 +30,6 @@ public class Main {
 					}
 				}
 			}
-
-			try (CallableStatement Transfer = conn.prepareCall("{call sp_UpdateBalance(?, ?)}")) {
-				Transfer.setString(1, senderId);
-				Transfer.setBigDecimal(2, amount.negate());
-				Transfer.executeUpdate();
-
-				Transfer.setString(1, receiverId);
-				Transfer.setBigDecimal(2, amount);
-				Transfer.executeUpdate();
-			}
-
-			conn.commit();
-			displayStatus(conn, senderId, receiverId);
-
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-			if (conn != null) {
-				try {
-					conn.rollback();
-				} catch (SQLException ex) {
-					ex.printStackTrace();
-				}
-			}
-		} finally {
-			try {
-				if (conn != null) conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 
 	private static void displayStatus(Connection conn, String id1, String id2) throws SQLException {
 		String sqlSelect = "SELECT * FROM Accounts WHERE AccountId IN (?, ?)";
